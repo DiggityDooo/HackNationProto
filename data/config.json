@@ -1,0 +1,11 @@
+{
+  "metro": "Sacramento–Roseville–Arden-Arcade, CA",
+  "program": "LIHTC",
+  "ruleYear": "FY2026",
+  "amiThreshold": 60,
+  "sourceRelease": "FY2026 MTSP Income Limits (frozen)",
+  "effectiveDate": "2026-05-01",
+  "sourceUrl": "https://www.huduser.gov/portal/datasets/mtsp.html",
+  "geography": "Sacramento--Roseville--Arden-Arcade, CA HUD Metro FMR Area",
+  "datasetAsOf": "2026-05-01"
+}
