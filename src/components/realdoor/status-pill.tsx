@@ -1,31 +1,31 @@
-import { CheckCircle2, FileWarning, AlertTriangle, HelpCircle, Circle } from "lucide-react";
+import { CheckCircle2, FileWarning, AlertTriangle, HelpCircle, AlertCircle } from "lucide-react";
 import type { ChecklistStatus } from "@/lib/realdoor-data";
 
 const MAP: Record<ChecklistStatus, { label: string; icon: typeof CheckCircle2; className: string }> = {
-  confirmed: {
-    label: "Confirmed",
+  current: {
+    label: "Current",
     icon: CheckCircle2,
-    className: "bg-[oklch(0.72_0.17_158/0.15)] text-[oklch(0.85_0.15_158)] ring-1 ring-[oklch(0.72_0.17_158/0.4)]",
-  },
-  present: {
-    label: "Present",
-    icon: Circle,
-    className: "bg-primary/15 text-[oklch(0.82_0.14_260)] ring-1 ring-primary/40",
+    className: "bg-[color:var(--color-success)]/10 text-[color:var(--color-success)] ring-1 ring-[color:var(--color-success)]/40",
   },
   missing: {
     label: "Missing",
     icon: FileWarning,
-    className: "bg-destructive/15 text-[oklch(0.85_0.18_25)] ring-1 ring-destructive/40",
+    className: "bg-destructive/10 text-destructive ring-1 ring-destructive/40",
   },
   expired: {
     label: "Expired",
     icon: AlertTriangle,
-    className: "bg-warning/15 text-[oklch(0.88_0.14_80)] ring-1 ring-warning/40",
+    className: "bg-attention/15 text-attention-foreground ring-1 ring-attention/50",
   },
-  review: {
-    label: "Needs review",
+  conflicting: {
+    label: "Conflicting",
+    icon: AlertCircle,
+    className: "bg-attention/15 text-attention-foreground ring-1 ring-attention/50",
+  },
+  unverified: {
+    label: "Unverified",
     icon: HelpCircle,
-    className: "bg-white/5 text-muted-foreground ring-1 ring-white/15",
+    className: "bg-muted text-muted-foreground ring-1 ring-border",
   },
 };
 
@@ -37,6 +37,7 @@ export function StatusPill({ status }: { status: ChecklistStatus }) {
       className={
         "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium " + cfg.className
       }
+      aria-label={`Status: ${cfg.label}`}
     >
       <Icon className="h-3.5 w-3.5" aria-hidden />
       <span>{cfg.label}</span>
