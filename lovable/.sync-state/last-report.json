@@ -1,9 +1,9 @@
 {
-  "at": "2026-07-18T23:55:00-07:00",
-  "local": "8129a864ac8d489301a241df65405cefe3a9e0cb",
-  "origin": "8129a864ac8d489301a241df65405cefe3a9e0cb",
-  "mirror": "6480a0ef2d4388f27cc5e038cc3609e875704761",
-  "lovable_commit": "6480a0ef2d4388f27cc5e038cc3609e875704761",
+  "at": "2026-07-19T00:00:00-07:00",
+  "local": "5236c7cb7127129d42ac58bb80ebaa5dbdd0581a",
+  "origin": "5236c7cb7127129d42ac58bb80ebaa5dbdd0581a",
+  "mirror": "d16db3f6cd3cd1f3f2e2d37e8449799b1e5b0326",
+  "lovable_commit": "d16db3f6cd3cd1f3f2e2d37e8449799b1e5b0326",
   "action": "pulled_mirror",
-  "notes": "Full-checklist pass (task k7anw4pqr) landed commit 6480a0e: Prepare readiness banner, ZIP split into documents/citations/activity-history + CONTENTS.txt, PDF citation appendix, privacy data-use register, stage-aware starter chips, Discover hidden-by-filter count, Profile household size 1-8 range. Pulled into src/ uncommitted. The send_message MCP call itself hit our 300s client-side idle timeout and reported 'failed', but Lovable kept working server-side and completed for real - client timeout is cosmetic, not a task failure. Much of the 45-item checklist still remains (avatar polish, welcome/demo verify, understand ledger/QA, remaining safety panels, full visual system pass, access confirmation). Sending a continuation message next."
+  "notes": "Pulled and committed second checklist batch (commit d16db3f6 -> local 5236c7c): app-shell avatar/theme, realdoor-data Q&A/ledger content, Prepare completion moment, Profile conflict panel, Understand ledger refinements. Confirmed the huge full-tree diff (2.7M deletions) between HEAD and lovable/main is expected/harmless - lovable/main never contained app/, lib/, data/, corpus/, prisma/, or root docs, only src/. Continued to scope all checkouts to -- src/ only."
 }
