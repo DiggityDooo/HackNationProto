@@ -131,18 +131,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <RealDoorProvider>
         <Outlet />
-        <Toaster
-          theme="dark"
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: "rgba(22, 30, 54, 0.92)",
-              border: "1px solid rgba(79, 131, 255, 0.25)",
-              color: "#eaf0ff",
-              backdropFilter: "blur(12px)",
-            },
-          }}
-        />
+        <Toaster position="bottom-right" richColors closeButton />
       </RealDoorProvider>
     </QueryClientProvider>
   );
