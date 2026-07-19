@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build
 
 FROM base AS runner
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl
 ENV NODE_ENV=production
 ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
