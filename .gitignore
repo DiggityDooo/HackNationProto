@@ -5,7 +5,8 @@ node_modules
 prisma/dev.db
 prisma/dev.db-journal
 prisma/test-prisma.db
-.claude/
+.claude/*
+!.claude/skills
 .next/
 .kilo/
 .vscode/
