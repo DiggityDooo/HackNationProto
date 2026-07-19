@@ -74,7 +74,8 @@ const checklistSchema = z.object({
     z.object({
       id: z.string(),
       label: z.string(),
-      expiryMonths: z.number(),
+      expiryMonths: z.number().default(0),
+      expiryDays: z.number().optional(),
       description: z.string(),
     }),
   ),
@@ -84,6 +85,8 @@ export interface ChecklistItem {
   id: string;
   label: string;
   expiryMonths: number;
+  /** When set (>0), preferred over expiryMonths (pack CH-READINESS-001 uses 60 days). */
+  expiryDays?: number;
   description: string;
 }
 
@@ -154,4 +157,70 @@ export function getSyntheticDoc(id: string): SyntheticDoc | null {
 // Validator used by the extractor to enforce the allowlist at the type level.
 export function isProfileFieldKey(k: string): k is ProfileFieldKey {
   return (PROFILE_FIELD_KEYS as readonly string[]).includes(k);
+}
+
+/** Authoritative Boston slice from organizer pack CSV (50/60 only). */
+export function loadMtspBostonPack(): MtspTable {
+  const parsed = mtspSchema.parse(readJson("mtsp-boston-pack.json"));
+  const limits = parsed.limits;
+  return {
+    effectiveDate: parsed.meta.effectiveDate,
+    sourceUrl: parsed.meta.sourceUrl,
+    get(geography, householdSize, amiPercent) {
+      const bySize = limits[geography];
+      if (!bySize) return null;
+      const byAmi = bySize[String(householdSize)] as
+        Partial<Record<"30" | "50" | "60" | "80", number>> | undefined;
+      if (!byAmi) return null;
+      return byAmi[String(amiPercent) as "30" | "50" | "60" | "80"] ?? null;
+    },
+  };
+}
+
+const lihtcSchema = z.object({
+  meta: z.object({ count: z.number(), note: z.string() }).passthrough(),
+  projects: z.array(
+    z
+      .object({
+        hud_id: z.string(),
+        name: z.string(),
+        address: z.string(),
+        city: z.string(),
+        state: z.string(),
+        zip: z.string(),
+        availability: z.literal("unknown"),
+        source: z.string(),
+      })
+      .passthrough(),
+  ),
+});
+
+export type LihtcProject = z.infer<typeof lihtcSchema>["projects"][number];
+
+export function loadLihtcBoston(): LihtcProject[] {
+  return lihtcSchema.parse(readJson("lihtc-boston.json")).projects;
+}
+
+const rulesSchema = z.object({
+  rules: z.array(
+    z
+      .object({
+        rule_id: z.string(),
+        text: z.string(),
+        source_url: z.string().nullable().optional(),
+        effective_date: z.string().nullable().optional(),
+        authority: z.string().optional(),
+        source_locator: z.string().optional(),
+      })
+      .passthrough(),
+  ),
+});
+
+export function loadRulesCorpus() {
+  return rulesSchema.parse(readJson("rules-corpus.json")).rules;
+}
+
+export function loadAdversarialPack(): unknown[] {
+  const raw = readJson("adversarial.json") as { pack_tests?: unknown[] };
+  return raw.pack_tests ?? [];
 }
