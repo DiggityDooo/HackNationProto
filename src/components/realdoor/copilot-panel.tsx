@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MessageCircle, X, ChevronDown, Info } from "lucide-react";
 import { AvatarGuide } from "./avatar-guide";
+import { GuideAvatar3D } from "./guide-avatar-3d";
 import { useRealDoor } from "@/lib/realdoor-store";
 import { ASSISTANT_RULES } from "@/lib/realdoor-data";
 import { cn } from "@/lib/utils";
@@ -38,6 +39,7 @@ export function CopilotPanel() {
           "hidden lg:flex sticky top-24 h-[calc(100dvh-8rem)] w-full max-w-sm flex-col overflow-hidden rounded-lg border border-border bg-paper",
         )}
       >
+        <GuideAvatar3D heightClassName="h-52" className="rounded-none border-b border-border" />
         <Header />
         <Body openIdx={openIdx} setOpenIdx={setOpenIdx} />
       </aside>
@@ -55,10 +57,11 @@ export function CopilotPanel() {
             onClick={() => setCopilotOpen(false)}
             aria-hidden
           />
-          <div className="absolute inset-x-0 bottom-0 max-h-[85dvh] rounded-t-2xl border-t border-border bg-paper shadow-2xl">
-            <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <div className="absolute inset-x-0 bottom-0 max-h-[90dvh] rounded-t-2xl border-t border-border bg-paper shadow-2xl">
+            <GuideAvatar3D heightClassName="h-40" className="rounded-none rounded-t-2xl" />
+            <div className="flex items-center justify-between border-b border-t border-border px-4 py-3">
               <div className="flex items-center gap-3">
-                <AvatarGuide size={32} active />
+                <AvatarGuide size={28} active />
                 <div>
                   <div className="text-sm font-medium">RealDoor Guide</div>
                   <div className="text-[11px] text-muted-foreground">Read-only · Explains only</div>
@@ -73,7 +76,7 @@ export function CopilotPanel() {
                 <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="max-h-[70dvh] overflow-y-auto">
+            <div className="max-h-[60dvh] overflow-y-auto">
               <Body openIdx={openIdx} setOpenIdx={setOpenIdx} />
             </div>
           </div>
