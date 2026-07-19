@@ -19,70 +19,86 @@ function err(message: string) {
   return { status: "error" as const, error: message };
 }
 
+function actionError(error: unknown, fallback: string) {
+  return err(error instanceof Error ? error.message : fallback);
+}
+
 // --- Profile: upload/select a synthetic doc and extract allowlisted fields ---
 export async function extractDocument(docId: string) {
-  const doc = loadSynthetic().find((d) => d.id === docId);
-  if (!doc) return err("Unknown document.");
-  const sessionId = await getOrCreateSessionId();
-  const store = getSessionStore();
-  const result = await runExtraction({
-    docId: doc.id,
-    text: doc.text,
-    config: DEMO_CONFIG,
-    gold: doc.gold,
-  });
-  const fields = toProfileFields(sessionId, doc.id, result, DEMO_CONFIG);
-  await store.saveFields(sessionId, fields);
-  await store.appendAudit(sessionId, {
-    action: "extract",
-    detail:
-      `Extracted ${fields.length} fields from ${doc.id}` +
-      (result.injectionDetected ? " (injection detected, inert)" : ""),
-    ruleVersion: `${DEMO_CONFIG.program}/${DEMO_CONFIG.ruleYear}`,
-  });
-  revalidatePath("/profile");
-  return ok({
-    fields,
-    droppedKeys: result.droppedKeys,
-    injectionDetected: result.injectionDetected,
-  });
+  try {
+    const doc = loadSynthetic().find((d) => d.id === docId);
+    if (!doc) return err("Unknown document.");
+    const sessionId = await getOrCreateSessionId();
+    const store = getSessionStore();
+    const result = await runExtraction({
+      docId: doc.id,
+      text: doc.text,
+      config: DEMO_CONFIG,
+      gold: doc.gold,
+    });
+    const fields = toProfileFields(sessionId, doc.id, result, DEMO_CONFIG);
+    await store.saveFields(sessionId, fields);
+    await store.appendAudit(sessionId, {
+      action: "extract",
+      detail:
+        `Extracted ${fields.length} fields from ${doc.id}` +
+        (result.injectionDetected ? " (injection detected, inert)" : ""),
+      ruleVersion: `${DEMO_CONFIG.program}/${DEMO_CONFIG.ruleYear}`,
+    });
+    revalidatePath("/profile");
+    return ok({
+      fields,
+      droppedKeys: result.droppedKeys,
+      injectionDetected: result.injectionDetected,
+    });
+  } catch (error) {
+    return actionError(error, "Could not extract document.");
+  }
 }
 
 export async function confirmField(key: string, rawValue: string, corrected: boolean) {
-  const sessionId = await getOrCreateSessionId();
-  const store = getSessionStore();
-  const state: FieldState = corrected ? "corrected" : "confirmed";
-  await store.setFieldState(sessionId, key, state, rawValue);
-  await store.appendAudit(sessionId, {
-    action: corrected ? "correct" : "confirm",
-    detail: `Field ${key} ${corrected ? "corrected" : "confirmed"}`,
-    ruleVersion: `${DEMO_CONFIG.program}/${DEMO_CONFIG.ruleYear}`,
-  });
-  revalidatePath("/profile");
-  revalidatePath("/understand");
-  revalidatePath("/prepare");
-  return ok({ key, state });
+  try {
+    const sessionId = await getOrCreateSessionId();
+    const store = getSessionStore();
+    const state: FieldState = corrected ? "corrected" : "confirmed";
+    await store.setFieldState(sessionId, key, state, rawValue);
+    await store.appendAudit(sessionId, {
+      action: corrected ? "correct" : "confirm",
+      detail: `Field ${key} ${corrected ? "corrected" : "confirmed"}`,
+      ruleVersion: `${DEMO_CONFIG.program}/${DEMO_CONFIG.ruleYear}`,
+    });
+    revalidatePath("/profile");
+    revalidatePath("/understand");
+    revalidatePath("/prepare");
+    return ok({ key, state });
+  } catch (error) {
+    return actionError(error, "Could not update field.");
+  }
 }
 
 // --- Understand: deterministic rule calc + Q&A ---
 export async function computeReadiness() {
-  const sessionId = await getOrCreateSessionId();
-  const store = getSessionStore();
-  const fields = await store.getFields(sessionId);
-  const table = loadMtsp();
-  const result = evaluateReadiness(table, DEMO_CONFIG, fields);
-  if (!result.abstained) {
-    await store.saveRuleResult(sessionId, result);
+  try {
+    const sessionId = await getOrCreateSessionId();
+    const store = getSessionStore();
+    const fields = await store.getFields(sessionId);
+    const table = loadMtsp();
+    const result = evaluateReadiness(table, DEMO_CONFIG, fields);
+    if (!result.abstained) {
+      await store.saveRuleResult(sessionId, result);
+    }
+    await store.appendAudit(sessionId, {
+      action: "calc",
+      detail: result.abstained
+        ? `Abstained: ${result.abstainReason}`
+        : `Readiness band: ${result.band} (${result.value}% of limit)`,
+      ruleVersion: `${DEMO_CONFIG.program}/${DEMO_CONFIG.ruleYear}`,
+    });
+    revalidatePath("/understand");
+    return ok(result);
+  } catch (error) {
+    return actionError(error, "Could not compute readiness.");
   }
-  await store.appendAudit(sessionId, {
-    action: "calc",
-    detail: result.abstained
-      ? `Abstained: ${result.abstainReason}`
-      : `Readiness band: ${result.band} (${result.value}% of limit)`,
-    ruleVersion: `${DEMO_CONFIG.program}/${DEMO_CONFIG.ruleYear}`,
-  });
-  revalidatePath("/understand");
-  return ok(result);
 }
 
 export async function askRule(question: string) {

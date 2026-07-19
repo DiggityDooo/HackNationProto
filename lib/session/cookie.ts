@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
-import { getSessionStore } from "@/lib/session";
-import { memoryStore } from "@/lib/session/memory-store";
+import { disablePrismaSessionStore, getSessionStore } from "@/lib/session";
 
 const COOKIE = "realdoor_session";
 
@@ -13,7 +12,8 @@ export async function getOrCreateSessionId(): Promise<string> {
     try {
       id = await getSessionStore().createSession();
     } catch {
-      id = await memoryStore.createSession();
+      disablePrismaSessionStore();
+      id = await getSessionStore().createSession();
     }
     jar.set(COOKIE, id, { httpOnly: true, sameSite: "lax", path: "/" });
   }

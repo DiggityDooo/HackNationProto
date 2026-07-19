@@ -12,14 +12,14 @@ FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # prisma generate during build; sqlite url only needed for schema load
-ENV DATABASE_URL="file:./prisma/dev.db"
+ENV DATABASE_URL="file:/tmp/realdoor.db"
 RUN npm run build
 
 FROM base AS runner
 ENV NODE_ENV=production
 ENV PORT=8080
 ENV HOSTNAME=0.0.0.0
-ENV DATABASE_URL="file:./prisma/dev.db"
+ENV DATABASE_URL="file:/tmp/realdoor.db"
 
 COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/package-lock.json ./package-lock.json

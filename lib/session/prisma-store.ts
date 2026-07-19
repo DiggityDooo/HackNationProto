@@ -27,6 +27,11 @@ export class PrismaSessionStore implements SessionStore {
   }
 
   async saveFields(sessionId: string, fields: ProfileField[]) {
+    await prisma.session.upsert({
+      where: { id: sessionId },
+      create: { id: sessionId },
+      update: {},
+    });
     await prisma.$transaction([
       prisma.profileField.deleteMany({ where: { sessionId } }),
       prisma.profileField.createMany({
