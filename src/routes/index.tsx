@@ -87,11 +87,7 @@ function WelcomePage() {
       <main id="welcome-main" className="mx-auto max-w-[1400px] px-4 py-10 sm:px-6 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
           <div>
-            <motion.div
-              initial={reduce ? { opacity: 1 } : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
+            <div>
               <div className="flex items-center gap-3">
                 <AvatarGuide size={44} active />
                 <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
@@ -106,7 +102,7 @@ function WelcomePage() {
                 under frozen HUD FY 2026 LIHTC rules. You confirm every field. RealDoor never
                 approves, denies, ranks, or scores anyone.
               </p>
-            </motion.div>
+            </div>
 
             <PaperCard className="mt-8 p-5 sm:p-6" raised>
               <h2 className="text-sm font-semibold">Consent before you upload</h2>
