@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+
 import { UploadCloud, ArrowRight, ShieldCheck, Lock, FileText } from "lucide-react";
 import { WelcomeStage } from "@/components/realdoor/welcome-stage";
 import { AvatarGuide } from "@/components/realdoor/avatar-guide";
