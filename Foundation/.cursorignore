@@ -1,0 +1,51 @@
+# Secrets – NEVER expose these to AI
+.env
+.env.*
+.env.local
+.secret
+*.pem
+*.key
+*.p 12
+secrets/
+credentials/
+.netrc
+
+# Node.js – biggest waste of indexing time
+node_modules/
+
+# Build artifacts (Next.js, Vite, etc.)
+.next/
+dist/
+build/
+.target/
+*.log
+coverage/
+tmp/
+.cache/
+
+# Python venvs and caches
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+
+# IDE/tool files – prevent circular indexing
+.cursor/
+.idea/
+.vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Large files – API credits waste
+*.mp 4
+*.zip
+*.tar.gz
+*.png
+*.jpg
+*.ico
+
+# Stack-specific (adjust based on your usual)
+*.min.js
+target/         # Rust/Java

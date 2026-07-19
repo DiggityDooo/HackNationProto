@@ -1,0 +1,37 @@
+{
+  "meta": {
+    "program": "LIHTC",
+    "ruleYear": "FY2026",
+    "note": "Rules Q&A with authoritative citations. The LLM may only EXPLAIN these; it never invents numbers/dates/citations."
+  },
+  "qa": [
+    {
+      "id": "q-income-limit",
+      "question": "How is the income limit for my household size determined?",
+      "answer": "HUD publishes Multifamily Tax Subsidy Project (MTSP) income limits by metropolitan area, household size, and percentage of Area Median Income (AMI). For LIHTC, the relevant comparison is your total annual household income against the applicable AMI limit (e.g., 60% AMI) for your household size in the property's metro, effective May 1, 2026.",
+      "citation": "HUD User — MTSP Income Limits (FY2026), effective 2026-05-01. https://www.huduser.gov/portal/datasets/mtsp.html",
+      "sourceUrl": "https://www.huduser.gov/portal/datasets/mtsp.html"
+    },
+    {
+      "id": "q-what-counts",
+      "question": "Whose income counts toward the household limit?",
+      "answer": "Income of all household members is generally counted toward the household income limit, subject to HUD exclusions (e.g., some disability assistance). Confirm with the property's published tenant selection plan; RealDoor shows the math from your confirmed inputs and does not decide eligibility.",
+      "citation": "26 U.S.C. § 42 — Low-Income Housing Credit; HUD MTSP methodology (FY2026).",
+      "sourceUrl": "https://www.huduser.gov/portal/datasets/mtsp.html"
+    },
+    {
+      "id": "q-effective-date",
+      "question": "When do the FY2026 income limits take effect?",
+      "answer": "The FY2026 MTSP income limits are effective May 1, 2026. Use the limit table whose effective date matches your application's program year.",
+      "citation": "HUD User — MTSP Income Limits (FY2026), effective 2026-05-01.",
+      "sourceUrl": "https://www.huduser.gov/portal/datasets/mtsp.html"
+    },
+    {
+      "id": "q-readiness-not-eligibility",
+      "question": "Does RealDoor tell me if I am approved?",
+      "answer": "No. RealDoor is an application-readiness copilot. It explains published rules, shows the income-to-limit math from your confirmed inputs, and identifies documents you may still need. A qualified human at the property makes any eligibility decision.",
+      "citation": "RealDoor product boundary — assistive, not adjudicative.",
+      "sourceUrl": "https://www.huduser.gov/portal/datasets/mtsp.html"
+    }
+  ]
+}

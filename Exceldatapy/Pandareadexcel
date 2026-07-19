@@ -1,0 +1,51 @@
+import pandas as pd
+import json
+
+# --
+
+- Step 1: Load and inspect ---
+df = pd.read_excel("FY 2026_MTSP_Income_Limits.xlsx")
+
+print(df.columns.tolist())   # confirm actual header names before filtering
+print(df.head(3))
+
+# --
+
+- Step 2: Filter to your target geography ---
+# Adjust column names once you've confirmed them from the print() above.
+# Common HUD naming: 'State', 'County_Name' or 'Areaname', 'HUD_Area_Code'
+target_state = "CA"
+target_county = "Sacramento"  # adjust as needed
+
+mask = (
+    df["State"].str.upper() == target_state
+) & (
+    df["County_Name"].str.contains(target_county, case=False, na=False)
+)
+filtered = df[mask].copy()
+
+if filtered.empty:
+    print("No match — re-check column names/values from the inspect step above.")
+
+# --
+
+- Step 3: Attach effective-date metadata (not per-row, once at export) ---
+metadata = {
+    "program": "LIHTC",
+    "limit_type": "MTSP",
+    "rule_year": 2026,
+    "effective_date": "2026-05-01",
+    "source": "HUD User Portal 
+
+- FY 2026 MTSP Income Limits (MS Excel)",
+}
+
+output = {
+    "metadata": metadata,
+    "records": filtered.to_dict(orient="records"),
+}
+
+with open("mtsp_2026_filtered.json", "w") as f:
+    json.dump(output, f, indent=2)
+
+print(f"Exported {len(filtered)} matching rows with metadata.")

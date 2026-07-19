@@ -1,0 +1,7 @@
+{
+  "url": "https://data.cambridgema.gov/",
+  "title": "Site Currently Unavailable",
+  "raw_content": "The website https://data.cambridgema.gov/ is currently returning a 503 Service Temporarily Unavailable error (Socrata/Tyler Tech downtime). Tavily Extract failed to fetch this URL.",
+  "images": [],
+  "error": "Failed to fetch url"
+}

@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "program": "LIHTC",
+    "ruleYear": "FY2026",
+    "note": "Gold document checklist with expiry rules. status is readiness, NOT approval."
+  },
+  "items": [
+    {
+      "id": "id-proof",
+      "label": "Government-issued photo ID",
+      "expiryMonths": 0,
+      "description": "Valid unexpired state/national ID."
+    },
+    {
+      "id": "income-proof",
+      "label": "Proof of income (pay stub or benefit letter)",
+      "expiryMonths": 3,
+      "description": "Most recent 30 days of income documentation."
+    },
+    {
+      "id": "household-composition",
+      "label": "Household composition statement",
+      "expiryMonths": 6,
+      "description": "List of all household members and relationships."
+    },
+    {
+      "id": "asset-statement",
+      "label": "Bank / asset statement",
+      "expiryMonths": 3,
+      "description": "Most recent account statements."
+    },
+    {
+      "id": "prior-address",
+      "label": "Prior address / rental history",
+      "expiryMonths": 12,
+      "description": "Last 2 years of residence."
+    },
+    {
+      "id": "ssn-or-itin",
+      "label": "SSN or ITIN documentation",
+      "expiryMonths": 0,
+      "description": "Tax identifier for each adult household member."
+    }
+  ]
+}

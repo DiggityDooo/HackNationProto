@@ -1,0 +1,90 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Set to postgresql for prod, SQLite for hackathon dev
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  deletedAt DateTime? // Used to flag session for teardown/export before hard deletion
+
+  // Relations: Cascading delete ensures that wiping a session physically removes ALL trace data
+  profileFields ProfileField[]
+  ruleResults   RuleResult[]
+  auditLogs     AuditLog[]
+  packets       Packet[]
+}
+
+model ProfileField {
+  id             String  @id @default(uuid())
+  sessionId      String
+  key            String  // Must be restricted in code to allowlisted keys only
+  rawValue       String? // The text extracted from the synthetic doc
+  state          String  // ENUM-like: 'extracted' | 'uncertain' | 'confirmed' | 'corrected'
+  confidence     Float?  // 0.0 to 1.0 confidence score from the LLM
+  sourceDocId    String? // Reference to the synthetic document
+  evidenceBox    String? // Bounding box or text snippet locator for visual proof
+  ruleYear       String? // E.g., '2026'
+  effectiveDate  String? // E.g., '2026-05-01'
+  geography      String? // Geography/metro string
+  sourceUrl      String? // URL or reference to the source doc
+  datasetRelease String? // Dataset release/as-of label
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+model RuleResult {
+  id            String  @id @default(uuid())
+  sessionId     String
+  ruleId        String  // E.g., 'LIHTC_INCOME_LIMIT_60_AMI'
+  ruleYear      String  // E.g., 'FY2026'
+  inputRefs     String? // JSON string of input refs (e.g., '{"householdSize":"4"}')
+  threshold     Float?  // The frozen MTSP limit retrieved as a number
+  formula       String? // The deterministic math shown to the user
+  value         Float?  // The calculated value based on inputs
+  band          String? // Readiness band: 'below limit' | 'at or above limit' | 'abstained'
+  abstained     Boolean @default(false) // True when calc could not complete
+  abstainReason String? // Why the calc abstained (e.g., missing inputs)
+  effectiveDate String? // Must match the fixture's effective date (e.g., '2026-05-01')
+  geography     String? // Metro/Area string from the config fixture
+  sourceUrl     String? // Citation URL to HUD or official rule
+  citation      String? // Text citation explaining the rule
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  sessionId   String
+  action      String   // E.g., 'CONSENT_GRANTED', 'FIELD_CORRECTED', 'PACKET_EXPORTED'
+  detail      String?  // Non-sensitive detail about the action
+  timestamp   DateTime @default(now())
+  ruleVersion String?  // Logs the version of the corpus rules used at the time of action
+
+  // STRICT REQUIREMENT: Never store raw document contents here.
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+model Packet {
+  id        String  @id @default(uuid())
+  sessionId String  @unique // One packet per session
+  status    String  // E.g., 'draft', 'ready', 'exported'
+  payload   String? // JSON string of the packet payload
+
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
