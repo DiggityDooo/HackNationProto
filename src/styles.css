@@ -262,3 +262,114 @@
     animation: none !important;
   }
 }
+
+
+/* BuggyVerse-inspired RealDoor polish: premium glass sanctuary, civic-safe. */
+:root {
+  --bv-cyan: #22d3ee;
+  --bv-violet: #a78bfa;
+  --bv-pink: #fb7185;
+  --bv-green: #4ade80;
+}
+
+.spatial-shell {
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 14%, color-mix(in oklab, var(--color-primary) 16%, transparent) 0%, transparent 54%),
+    radial-gradient(ellipse 60% 50% at 12% 82%, color-mix(in oklab, var(--bv-violet) 13%, transparent) 0%, transparent 52%),
+    radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--color-background) 92%, black) 0%, var(--color-background) 58%, color-mix(in oklab, var(--color-background) 82%, black) 100%);
+}
+
+.ambient-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  opacity: 0.7;
+  transform: translateZ(0);
+}
+
+.xray-grid {
+  transform: perspective(900px) rotateX(52deg) translateY(-10%);
+  transform-origin: center top;
+}
+
+.city-lights {
+  background-image:
+    radial-gradient(circle, color-mix(in oklab, var(--color-primary) 76%, white) 0 1px, transparent 1.5px),
+    radial-gradient(circle, color-mix(in oklab, var(--color-attention) 65%, white) 0 1px, transparent 1.5px);
+  background-position: 0 0, 24px 18px;
+  background-size: 60px 42px, 76px 54px;
+  mask-image: linear-gradient(to top, black, transparent 80%);
+  animation: city-light-pulse 6s ease-in-out infinite alternate;
+}
+
+.orbital-line {
+  animation: orbital-drift 28s linear infinite;
+}
+
+.orbital-line-slow {
+  animation-duration: 44s;
+  animation-direction: reverse;
+}
+
+.paper-card,
+.paper-card-raised {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  backdrop-filter: blur(18px) saturate(1.2);
+  background: color-mix(in oklab, var(--color-paper) 82%, transparent) !important;
+  border-color: color-mix(in oklab, var(--color-border) 70%, white 12%) !important;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 18px 60px -42px rgb(7 8 26 / 0.48) !important;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease,
+    background-color 180ms ease;
+}
+
+.paper-card::before,
+.paper-card-raised::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 0.16), transparent 30%),
+    radial-gradient(circle at 12% 10%, color-mix(in oklab, var(--color-primary) 14%, transparent), transparent 34%),
+    radial-gradient(circle at 92% 0%, color-mix(in oklab, var(--bv-violet) 10%, transparent), transparent 30%);
+  opacity: 0.82;
+}
+
+.paper-card:hover,
+.paper-card-raised:hover {
+  border-color: color-mix(in oklab, var(--color-primary) 38%, var(--color-border)) !important;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 24px 80px -48px rgb(7 8 26 / 0.62) !important;
+}
+
+.ink-title {
+  font-family: var(--font-sans) !important;
+  font-weight: 760 !important;
+  letter-spacing: -0.045em !important;
+}
+
+@keyframes city-light-pulse {
+  from { opacity: 0.34; transform: translateY(12px); }
+  to { opacity: 0.76; transform: translateY(0); }
+}
+
+@keyframes orbital-drift {
+  from { transform: rotate(0deg) scale(1); }
+  to { transform: rotate(360deg) scale(1.02); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .city-lights,
+  .orbital-line,
+  .orbital-line-slow {
+    animation: none !important;
+  }
+}

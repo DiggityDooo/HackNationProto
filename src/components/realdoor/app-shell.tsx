@@ -50,21 +50,24 @@ export function AppShell({
   const shellRef = useAnimeReveal<HTMLDivElement>(pathname);
 
   return (
-    <div ref={shellRef} className="min-h-dvh bg-background text-foreground relative overflow-x-hidden">
-      {/* Ambient background depth: subtle grids and gradients */}
-      <div className="pointer-events-none fixed inset-0 flex justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_center,var(--color-primary)_0,transparent_100%)] opacity-[0.03] dark:opacity-[0.08]" />
+    <div ref={shellRef} className="spatial-shell min-h-dvh bg-background text-foreground relative overflow-x-hidden">
+      {/* BuggyVerse-inspired civic glass foundation: document grid, city lights, slow orbs. */}
+      <div className="pointer-events-none fixed inset-0 flex justify-center overflow-hidden" aria-hidden>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_center,var(--color-primary)_0,transparent_100%)] opacity-[0.08] dark:opacity-[0.18]" />
+        <div data-anime="ambient-orb" className="ambient-orb left-[7%] top-[10%] h-72 w-72 bg-primary/20" />
+        <div data-anime="ambient-orb" className="ambient-orb right-[9%] top-[18%] h-80 w-80 bg-[color:var(--bv-violet)]/20" />
+        <div data-anime="ambient-orb" className="ambient-orb bottom-[4%] left-[34%] h-96 w-96 bg-attention/14" />
         <div
-          className="absolute inset-0 opacity-[0.02] dark:opacity-[0.05]"
+          className="xray-grid absolute inset-0 opacity-[0.04] dark:opacity-[0.1]"
           style={{
             backgroundImage: `linear-gradient(to right, var(--color-foreground) 1px, transparent 1px), linear-gradient(to bottom, var(--color-foreground) 1px, transparent 1px)`,
-            backgroundSize: "40px 40px",
-            maskImage: "radial-gradient(ellipse 60% 60% at 50% 50%, black, transparent)",
+            backgroundSize: "44px 44px",
+            maskImage: "radial-gradient(ellipse 65% 60% at 50% 46%, black, transparent)",
           }}
         />
-        {/* Soft orbital lines */}
-        <div className="absolute top-[-20%] left-[-10%] w-[120%] h-[120%] rounded-full border border-primary/10 opacity-30 blur-[1px]" />
-        <div className="absolute top-[-10%] left-[-5%] w-[110%] h-[110%] rounded-full border border-foreground/5 opacity-20 blur-[2px]" />
+        <div className="city-lights absolute inset-x-0 bottom-0 h-72 opacity-70" />
+        <div className="orbital-line absolute top-[-20%] left-[-10%] h-[120%] w-[120%] rounded-full border border-primary/10 opacity-30 blur-[1px]" />
+        <div className="orbital-line orbital-line-slow absolute top-[-10%] left-[-5%] h-[110%] w-[110%] rounded-full border border-foreground/5 opacity-20 blur-[2px]" />
       </div>
 
       <a
@@ -75,7 +78,7 @@ export function AppShell({
       </a>
 
       {/* Persistent top badges bar */}
-      <div className="border-b border-border bg-paper">
+      <div className="border-b border-border bg-paper/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1400px] flex-wrap items-center gap-x-3 gap-y-1.5 px-4 py-2 text-[11px] sm:px-6">
           <span className="badge-persist">
             <Shield className="h-3 w-3" aria-hidden />
@@ -99,7 +102,7 @@ export function AppShell({
         </div>
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-border bg-paper/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border bg-paper/82 shadow-[0_1px_0_rgb(255_255_255_/_0.05)] backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-4 py-3 sm:px-6">
           <Link to="/" className="flex items-center gap-2.5 transition-soft hover:opacity-90">
             <AvatarGuide size={32} />
