@@ -64,7 +64,7 @@ export function StageRail() {
               const status = getStageStatus(it.stage);
 
               return (
-                <li key={it.stage}>
+                <li key={it.stage} data-anime="rail-item">
                   <Link
                     to={it.to}
                     aria-current={active ? "page" : undefined}

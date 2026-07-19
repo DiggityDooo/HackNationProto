@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useAnimeReveal } from "@/hooks/use-anime-reveal";
 
 const NAV = [
   { to: "/discover", label: "Discover" },
@@ -46,9 +47,10 @@ export function AppShell({
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { theme, toggleTheme } = useRealDoor();
   const [menuOpen, setMenuOpen] = useState(false);
+  const shellRef = useAnimeReveal<HTMLDivElement>(pathname);
 
   return (
-    <div className="min-h-dvh bg-background text-foreground relative overflow-x-hidden">
+    <div ref={shellRef} className="min-h-dvh bg-background text-foreground relative overflow-x-hidden">
       {/* Ambient background depth: subtle grids and gradients */}
       <div className="pointer-events-none fixed inset-0 flex justify-center overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_center,var(--color-primary)_0,transparent_100%)] opacity-[0.03] dark:opacity-[0.08]" />
