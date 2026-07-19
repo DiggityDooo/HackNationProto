@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { previewPacket, deletePacket } from "@/app/actions";
 import type { PacketPreview } from "@/app/actions";
+import type { ChecklistEval } from "@/lib/rules/checklist";
 
 function statusBadgeClass(s: string): string {
   switch (s) {
@@ -23,8 +24,17 @@ function needsAttention(status: string): boolean {
   return status !== "present" && status !== "confirmed";
 }
 
-export function PrepareClient() {
-  const [packet, setPacket] = useState<PacketPreview | null>(null);
+export function PrepareClient({ initialChecklist }: { initialChecklist: ChecklistEval[] }) {
+  const [packet, setPacket] = useState<PacketPreview | null>(() =>
+    initialChecklist.length
+      ? {
+          fields: [],
+          checklist: initialChecklist,
+          readinessNote:
+            "This packet shows your confirmed inputs and document readiness. It is NOT an eligibility decision and is never auto-submitted.",
+        }
+      : null,
+  );
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
 
@@ -39,6 +49,8 @@ export function PrepareClient() {
             ? `${unresolved.length} item(s) still need attention. You may still download the packet — status is readiness, not approval.`
             : "All checklist items are present. Download when ready.",
         );
+      } else if (res.status === "error") {
+        setMsg(res.error ?? "Could not preview packet. Try again.");
       }
     });
   }
@@ -49,6 +61,8 @@ export function PrepareClient() {
       if (res.status === "success") {
         setPacket(null);
         setMsg("Packet deleted. No packet copy is retained in this session.");
+      } else if (res.status === "error") {
+        setMsg(res.error ?? "Could not delete packet.");
       }
     });
   }

@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { getSessionStore } from "@/lib/session";
+import { memoryStore } from "@/lib/session/memory-store";
 
 const COOKIE = "realdoor_session";
 
@@ -9,7 +10,11 @@ export async function getOrCreateSessionId(): Promise<string> {
   const jar = await cookies();
   let id = jar.get(COOKIE)?.value;
   if (!id) {
-    id = await getSessionStore().createSession();
+    try {
+      id = await getSessionStore().createSession();
+    } catch {
+      id = await memoryStore.createSession();
+    }
     jar.set(COOKIE, id, { httpOnly: true, sameSite: "lax", path: "/" });
   }
   return id;

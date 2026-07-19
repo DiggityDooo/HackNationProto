@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "effectiveDate": "2026-05-01",
+    "sourceUrl": "https://www.huduser.gov/portal/datasets/mtsp.html",
+    "program": "LIHTC",
+    "ruleYear": "FY2026",
+    "datasetAsOf": "2026-05-01",
+    "source": "realdoor-hackathon-starter-pack/data/mtsp_2026_boston_cambridge_quincy.csv",
+    "note": "Authoritative Boston freeze from organizer pack. Engine config geography must match key."
+  },
+  "limits": {
+    "Boston-Cambridge-Quincy, MA-NH HUD Metro FMR Area": {
+      "1": {
+        "50": 60000,
+        "60": 72000
+      },
+      "2": {
+        "50": 68600,
+        "60": 82320
+      },
+      "3": {
+        "50": 77150,
+        "60": 92580
+      },
+      "4": {
+        "50": 85700,
+        "60": 102840
+      },
+      "5": {
+        "50": 92600,
+        "60": 111120
+      },
+      "6": {
+        "50": 99450,
+        "60": 119340
+      },
+      "7": {
+        "50": 106300,
+        "60": 127560
+      },
+      "8": {
+        "50": 113150,
+        "60": 135780
+      }
+    }
+  }
+}

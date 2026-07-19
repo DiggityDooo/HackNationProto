@@ -132,26 +132,30 @@ export async function previewPacket(): Promise<{
   data?: PacketPreview;
   error?: string;
 }> {
-  const sessionId = await getOrCreateSessionId();
-  const store = getSessionStore();
-  const fields = await store.getFields(sessionId);
-  const items = loadChecklist();
-  const checklist = evaluateChecklist(items, fields);
-  const confirmed = fields.filter((f) => f.state === "confirmed" || f.state === "corrected");
-  const preview: PacketPreview = {
-    fields: confirmed.map((f) => ({ key: f.key, rawValue: f.rawValue, state: f.state })),
-    checklist,
-    readinessNote:
-      "This packet shows your confirmed inputs and document readiness. It is NOT an eligibility decision and is never auto-submitted.",
-  };
-  await store.savePacket(sessionId, preview);
-  await store.appendAudit(sessionId, {
-    action: "packet_preview",
-    detail: `Packet previewed with ${checklist.length} checklist items`,
-    ruleVersion: `${DEMO_CONFIG.program}/${DEMO_CONFIG.ruleYear}`,
-  });
-  revalidatePath("/prepare");
-  return ok(preview);
+  try {
+    const sessionId = await getOrCreateSessionId();
+    const store = getSessionStore();
+    const fields = await store.getFields(sessionId);
+    const items = loadChecklist();
+    const checklist = evaluateChecklist(items, fields);
+    const confirmed = fields.filter((f) => f.state === "confirmed" || f.state === "corrected");
+    const preview: PacketPreview = {
+      fields: confirmed.map((f) => ({ key: f.key, rawValue: f.rawValue, state: f.state })),
+      checklist,
+      readinessNote:
+        "This packet shows your confirmed inputs and document readiness. It is NOT an eligibility decision and is never auto-submitted.",
+    };
+    await store.savePacket(sessionId, preview);
+    await store.appendAudit(sessionId, {
+      action: "packet_preview",
+      detail: `Packet previewed with ${checklist.length} checklist items`,
+      ruleVersion: `${DEMO_CONFIG.program}/${DEMO_CONFIG.ruleYear}`,
+    });
+    revalidatePath("/prepare");
+    return ok(preview);
+  } catch (error) {
+    return err(error instanceof Error ? error.message : "Could not preview packet.");
+  }
 }
 
 export async function deletePacket() {

@@ -12,9 +12,13 @@ export default async function UnderstandPage() {
   const sessionId = await getSessionId();
   let initial: RuleResult | null = null;
   if (sessionId) {
-    const fields = await getSessionStore().getFields(sessionId);
-    initial = evaluateReadiness(loadMtsp(), DEMO_CONFIG, fields);
-    if (initial.abstained) initial = null;
+    try {
+      const fields = await getSessionStore().getFields(sessionId);
+      initial = evaluateReadiness(loadMtsp(), DEMO_CONFIG, fields);
+      if (initial.abstained) initial = null;
+    } catch {
+      initial = null;
+    }
   }
   const qa = loadQa().map((q) => ({ id: q.id, question: q.question, citation: q.citation }));
   return <UnderstandClient initialResult={initial} qa={qa} />;
