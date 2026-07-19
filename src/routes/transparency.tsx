@@ -1,14 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/realdoor/app-shell";
-import { GlassCard } from "@/components/realdoor/glass-card";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { BookOpen, Calculator, Info, ScaleIcon, ShieldQuestion } from "lucide-react";
-import { HUD_SOURCE } from "@/lib/realdoor-data";
+import { PaperCard } from "@/components/realdoor/glass-card";
+import { Info, ShieldOff, Compass, HandHeart } from "lucide-react";
+import { FROZEN } from "@/lib/realdoor-data";
 
 export const Route = createFileRoute("/transparency")({
   head: () => ({
@@ -17,136 +11,87 @@ export const Route = createFileRoute("/transparency")({
       {
         name: "description",
         content:
-          "Frozen HUD FY2026 source scope, assistive-not-adjudicative boundaries, deterministic calculations, and citations.",
+          "Frozen scope, boundary of the tool, and the questions RealDoor will not answer.",
       },
     ],
   }),
   component: TransparencyPage,
 });
 
-const SECTIONS = [
-  {
-    id: "scope",
-    icon: BookOpen,
-    title: "Source scope (frozen)",
-    body: (
-      <div className="space-y-2 text-sm text-muted-foreground">
-        <p>
-          RealDoor references a <span className="text-foreground">single frozen source</span>:{" "}
-          {HUD_SOURCE.program}, {HUD_SOURCE.area}, effective {HUD_SOURCE.effectiveDate}.
-        </p>
-        <p>
-          Nothing else is used to answer readiness questions in this prototype — not property
-          waitlists, not PHA-specific rules, not federal or state programs outside HUD MTSP for
-          this HMFA.
-        </p>
-        <p className="border-l-2 border-primary/50 pl-3 text-xs italic">
-          {HUD_SOURCE.citation}
-        </p>
-      </div>
-    ),
-  },
-  {
-    id: "boundary",
-    icon: ScaleIcon,
-    title: "Assistive, not adjudicative",
-    body: (
-      <div className="space-y-2 text-sm text-muted-foreground">
-        <p>
-          RealDoor does not approve, deny, rank, score, or state eligibility. It helps you prepare
-          confirmed inputs and shows a deterministic comparison against a published rule.
-        </p>
-        <p>
-          Eligibility decisions are made by the property, PHA, or funder that receives your
-          completed application — not by RealDoor.
-        </p>
-      </div>
-    ),
-  },
-  {
-    id: "deterministic",
-    icon: Calculator,
-    title: "Deterministic calculations",
-    body: (
-      <div className="space-y-2 text-sm text-muted-foreground">
-        <p>
-          Readiness math is deterministic and inspectable. Given confirmed annualized income and a
-          household size, the comparison against each AMI cap is a fixed inequality: no
-          probabilistic ranking, no learned scoring, no hidden weighting.
-        </p>
-        <pre className="mt-2 overflow-x-auto rounded-lg border border-white/10 bg-black/30 p-3 font-mono text-[11px] text-foreground">
-{`at_or_under_band(band) =
-  confirmed_annual_income <=
-  HUD_FY2026_MTSP[hmfa=Sacramento, household_size][band]`}
-        </pre>
-      </div>
-    ),
-  },
-  {
-    id: "uncertainty",
-    icon: ShieldQuestion,
-    title: "Uncertainty & abstention",
-    body: (
-      <div className="space-y-2 text-sm text-muted-foreground">
-        <p>
-          When OCR confidence is below the reuse threshold, RealDoor flags the field for review and
-          refuses to reuse it downstream. When a question falls outside the frozen source scope —
-          or asks for a decision — RealDoor abstains and points back to confirmed inputs, the
-          published rule, and the calculation.
-        </p>
-        <p>
-          “Am I eligible?”, “am I qualified?”, and “decide for me” are always deflected. No
-          exceptions.
-        </p>
-      </div>
-    ),
-  },
-  {
-    id: "citations",
-    icon: Info,
-    title: "Citations",
-    body: (
-      <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-        <li>HUD FY2026 MTSP Income Limits — Sacramento–Roseville–Folsom, CA HMFA</li>
-        <li>24 CFR 5.609 (annual income determination)</li>
-        <li>HUD Handbook 4350.3 REV-1, Chapter 5 (income calculation conventions)</li>
-        <li>RealDoor Session & Privacy statement</li>
-      </ul>
-    ),
-  },
-];
-
 function TransparencyPage() {
   return (
     <AppShell>
-      <div className="mb-8 flex flex-col gap-2">
-        <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-[oklch(0.82_0.14_260)] ring-1 ring-primary/30">
+      <header className="mb-6">
+        <div className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
           Transparency
-        </span>
-        <h1 className="text-3xl font-semibold tracking-tight text-glow sm:text-4xl">
-          How RealDoor thinks — and where it stops
+        </div>
+        <h1 className="ink-title mt-1 text-3xl sm:text-4xl">
+          You confirm. A qualified human decides.
         </h1>
-        <p className="max-w-3xl text-sm text-muted-foreground sm:text-base">
-          Frozen source, deterministic math, and an explicit boundary between preparing an
-          application and deciding on one.
+        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+          RealDoor is assistive, not adjudicative. It does not approve, deny, rank, or score any
+          application, applicant, household, or property.
         </p>
-      </div>
+      </header>
 
-      <GlassCard className="p-4 sm:p-6">
-        <Accordion type="multiple" defaultValue={["scope", "boundary"]} className="w-full">
-          {SECTIONS.map((s) => (
-            <AccordionItem key={s.id} value={s.id} className="border-white/10">
-              <AccordionTrigger className="text-left text-sm">
-                <span className="flex items-center gap-2">
-                  <s.icon className="h-4 w-4 text-[oklch(0.82_0.14_260)]" aria-hidden />
-                  <span className="font-semibold">{s.title}</span>
-                </span>
-              </AccordionTrigger>
-              <AccordionContent>{s.body}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </GlassCard>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <PaperCard className="p-5">
+          <div className="flex items-center gap-2">
+            <Info className="h-4 w-4 text-primary" aria-hidden />
+            <h2 className="text-sm font-semibold">Frozen source scope</h2>
+          </div>
+          <ul className="mt-3 space-y-1 text-sm">
+            <li><span className="text-muted-foreground">Program: </span>{FROZEN.program}</li>
+            <li><span className="text-muted-foreground">Area: </span>{FROZEN.area}</li>
+            <li><span className="text-muted-foreground">Effective: </span>{FROZEN.effectiveDate}</li>
+            <li><span className="text-muted-foreground">Simulation date: </span>{FROZEN.simulationDate}</li>
+            <li><span className="text-muted-foreground">Evidence currency: </span>{FROZEN.evidenceCurrencyDays} days</li>
+            <li><span className="text-muted-foreground">Published by: </span>{FROZEN.publishedBy}</li>
+          </ul>
+          <p className="mt-3 text-xs text-muted-foreground">{FROZEN.citation}</p>
+        </PaperCard>
+
+        <PaperCard className="p-5">
+          <div className="flex items-center gap-2">
+            <ShieldOff className="h-4 w-4 text-primary" aria-hidden />
+            <h2 className="text-sm font-semibold">What RealDoor will not do</h2>
+          </div>
+          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <li>· Approve, deny, rank, or score any application or applicant.</li>
+            <li>· Predict acceptance at a property.</li>
+            <li>· Determine availability of any unit.</li>
+            <li>· Compare or share data across households, including demo scenarios.</li>
+            <li>· Follow instructions found inside uploaded documents.</li>
+            <li>· Submit or transmit your packet.</li>
+          </ul>
+        </PaperCard>
+
+        <PaperCard className="p-5">
+          <div className="flex items-center gap-2">
+            <Compass className="h-4 w-4 text-primary" aria-hidden />
+            <h2 className="text-sm font-semibold">What RealDoor will do</h2>
+          </div>
+          <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+            <li>· Extract an allowlist of fields from your synthetic document.</li>
+            <li>· Show you the exact evidence for each extracted value.</li>
+            <li>· Cite the frozen HUD FY 2026 rule and effective date.</li>
+            <li>· Compute deterministic income calculations with clear formulas.</li>
+            <li>· Flag evidence outside a 60-day currency window.</li>
+            <li>· Let you delete the session at any time.</li>
+          </ul>
+        </PaperCard>
+
+        <PaperCard className="p-5">
+          <div className="flex items-center gap-2">
+            <HandHeart className="h-4 w-4 text-primary" aria-hidden />
+            <h2 className="text-sm font-semibold">Human handoff</h2>
+          </div>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Bring your packet to the property, housing authority, or a nonprofit navigator. They
+            are the ones who verify, decide, and communicate outcomes.
+          </p>
+        </PaperCard>
+      </div>
     </AppShell>
   );
 }

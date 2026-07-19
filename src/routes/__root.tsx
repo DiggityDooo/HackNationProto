@@ -28,7 +28,7 @@ function NotFoundComponent() {
             to="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-soft hover:opacity-90"
           >
-            Return to Profile
+            Return to Welcome
           </Link>
         </div>
       </div>
@@ -81,14 +81,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "RealDoor helps Sacramento Metro renters prepare affordable-housing applications with confirmed inputs and HUD FY2026 LIHTC references. Assistive, not adjudicative.",
+          "RealDoor helps Boston-area renters prepare affordable-housing applications with confirmed inputs and HUD FY2026 LIHTC references. Assistive, not adjudicative.",
       },
       { name: "author", content: "RealDoor" },
       { property: "og:title", content: "RealDoor — Application-Readiness Copilot" },
       {
         property: "og:description",
         content:
-          "Prepare Sacramento affordable-housing applications with deterministic HUD FY2026 LIHTC readiness checks.",
+          "Prepare Boston affordable-housing applications with deterministic HUD FY2026 LIHTC readiness checks.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -100,7 +100,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap",
       },
     ],
   }),
@@ -131,18 +131,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <RealDoorProvider>
         <Outlet />
-        <Toaster
-          theme="dark"
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: "rgba(22, 30, 54, 0.92)",
-              border: "1px solid rgba(79, 131, 255, 0.25)",
-              color: "#eaf0ff",
-              backdropFilter: "blur(12px)",
-            },
-          }}
-        />
+        <Toaster position="bottom-right" richColors closeButton />
       </RealDoorProvider>
     </QueryClientProvider>
   );
