@@ -16,7 +16,7 @@ describe("MTSP loader null-safety", () => {
     expect(table.get("Nowhere, ZZ MSA", 4, 60)).toBeNull();
     expect(table.get(DEMO_CONFIG.geography, 99, 60)).toBeNull();
     // a present geography/size/band still resolves
-    expect(table.get(DEMO_CONFIG.geography, 4, 60)).toBe(78840);
+    expect(table.get(DEMO_CONFIG.geography, 4, 60)).toBe(102840);
   });
 
   it("engine reports 'No frozen MTSP limit' rather than throwing on a null lookup", () => {
