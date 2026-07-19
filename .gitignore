@@ -39,3 +39,6 @@ dist-ssr
 *.sw?
 
 *.log
+
+# local convenience symlink (machine-specific, self-referential)
+lovable/realdoor-ui

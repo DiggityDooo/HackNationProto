@@ -77,21 +77,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "RealDoor — Application-Readiness Copilot" },
+      { title: "Welcome — RealDoor" },
       {
         name: "description",
         content:
           "RealDoor helps Boston-area renters prepare affordable-housing applications with confirmed inputs and HUD FY2026 LIHTC references. Assistive, not adjudicative.",
       },
       { name: "author", content: "RealDoor" },
-      { property: "og:title", content: "RealDoor — Application-Readiness Copilot" },
+      { property: "og:title", content: "Welcome — RealDoor" },
       {
         property: "og:description",
         content:
-          "Prepare Boston affordable-housing applications with deterministic HUD FY2026 LIHTC readiness checks.",
+          "RealDoor helps Boston-area renters prepare affordable-housing applications with confirmed inputs and HUD FY2026 LIHTC references. Assistive, not adjudicative.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Welcome — RealDoor" },
+      { name: "twitter:description", content: "RealDoor helps Boston-area renters prepare affordable-housing applications with confirmed inputs and HUD FY2026 LIHTC references. Assistive, not adjudicative." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/522d9032-d202-4139-ab78-5358710e1531/id-preview-d5e6fe17--8c39b55a-c517-4512-9f7e-7ecd8dc147d0.lovable.app-1784441464142.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/522d9032-d202-4139-ab78-5358710e1531/id-preview-d5e6fe17--8c39b55a-c517-4512-9f7e-7ecd8dc147d0.lovable.app-1784441464142.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

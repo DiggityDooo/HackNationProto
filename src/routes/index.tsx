@@ -22,11 +22,11 @@ export const Route = createFileRoute("/")({
         content:
           "RealDoor helps Boston-area renters prepare affordable-housing applications with confirmed inputs and HUD FY2026 LIHTC references. Assistive, not adjudicative.",
       },
-      { property: "og:title", content: "RealDoor — Application-Readiness Copilot" },
+      { property: "og:title", content: "Welcome — RealDoor" },
       {
         property: "og:description",
         content:
-          "Prepare Boston affordable-housing applications with deterministic HUD FY2026 LIHTC readiness checks.",
+          "RealDoor helps Boston-area renters prepare affordable-housing applications with confirmed inputs and HUD FY2026 LIHTC references. Assistive, not adjudicative.",
       },
     ],
   }),

@@ -28,7 +28,8 @@ function UnderstandPage() {
 
   const income = confirmedAnnualIncome(rd.fields);
   const limits = limitsFor(rd.householdSize);
-  const threshold60 = limits["60"];
+  const threshold60 = limits?.["60"] ?? null;
+  const outOfTable = limits === null;
 
   return (
     <AppShell>
@@ -52,8 +53,26 @@ function UnderstandPage() {
           {income === null ? (
             <div className="mt-4 rounded-md border border-attention/50 bg-attention/15 p-3 text-sm">
               <AlertCircle className="mr-1 inline h-4 w-4" aria-hidden />
-              Confirm the derived <span className="font-medium">Annualized gross</span> field on the
-              Profile screen to compute a comparison. RealDoor abstains when inputs are unconfirmed.
+              <span className="font-medium">Cannot compute: annualized gross is not yet confirmed.</span>{" "}
+              RealDoor does not render tentative or best-effort numbers. Confirm the derived{" "}
+              <span className="font-mono text-xs">annualized</span> field on the Profile screen and this
+              ledger will recompute deterministically.{" "}
+              <a href="/profile" className="text-primary underline underline-offset-2">
+                Fix on Profile →
+              </a>
+            </div>
+          ) : outOfTable || threshold60 === null ? (
+            <div className="mt-4 rounded-md border border-attention/50 bg-attention/15 p-3 text-sm">
+              <AlertCircle className="mr-1 inline h-4 w-4" aria-hidden />
+              <span className="font-medium">
+                Cannot compute: no frozen threshold for household size {rd.householdSize}.
+              </span>{" "}
+              The FY2026 MTSP table only freezes household sizes 1–8. RealDoor does not extrapolate
+              a threshold and will not display a tentative comparison.{" "}
+              <a href="/profile" className="text-primary underline underline-offset-2">
+                Adjust household size on Profile →
+              </a>{" "}
+              or request human review for a size outside the table.
             </div>
           ) : (
             <dl className="mt-4 divide-y divide-border rounded-md border border-border">
@@ -74,6 +93,7 @@ function UnderstandPage() {
               />
             </dl>
           )}
+
 
           <div className="mt-4 rounded-md border border-border bg-accent/40 p-3 text-xs text-muted-foreground">
             <span className="font-medium text-foreground">Not an eligibility decision.</span>{" "}

@@ -1,54 +1,101 @@
-// RealDoor — Boston FY2026 MTSP frozen demo data (SYNTHETIC / ILLUSTRATIVE).
-// Field shape mirrors the HackNationProto starter pack:
-//   realdoor-hackathon-starter-pack/field_schema.json
-//   realdoor-hackathon-starter-pack/document_gold.jsonl
-// All values here are illustrative and clearly labeled as synthetic.
+// RealDoor — Boston FY2026 MTSP frozen demo data.
+//
+// Frozen constants (geography, dates, AMI limits) come from the canonical
+// contract mirrored in `./realdoor-contract`. Synthetic content below
+// (scenarios, document text, property directory) is illustrative demo
+// data only and is clearly labeled as such.
+//
+// Field shape mirrors the HackNationProto engine (lib/types.ts,
+// lib/rules/*, lib/safety/guard.ts). Do NOT reimplement rule logic here.
+
+import {
+  CONTRACT,
+  amiLimit60,
+  frozenMtspLimit,
+  isFrozenHouseholdSize,
+} from "./realdoor-contract";
 
 export const FROZEN = {
   program: "HUD FY2026 MTSP / LIHTC Income Limits",
-  area: "Boston-Cambridge-Quincy, MA-NH HUD Metro FMR Area",
-  effectiveDate: "2026-05-01",
-  simulationDate: "2026-07-18",
-  evidenceCurrencyDays: 60,
+  area: CONTRACT.frozenContext.geographyHudLabel,
+  geographyLabel: CONTRACT.frozenContext.geography,
+  effectiveDate: CONTRACT.frozenContext.effectiveDate,
+  simulationDate: CONTRACT.frozenContext.simulationDate,
+  evidenceCurrencyDays: CONTRACT.frozenContext.evidenceCurrencyDays,
   publishedBy: "U.S. Department of Housing and Urban Development, PD&R",
-  citation:
-    "HUD FY2026 MTSP Income Limits — Boston-Cambridge-Quincy, MA-NH HUD Metro FMR Area. Effective 2026-05-01. Published by HUD PD&R. (Illustrative synthetic values for hackathon prototype.)",
-  url: "https://www.huduser.gov/portal/datasets/mtsp.html",
+  citation: CONTRACT.citation,
+  url: CONTRACT.frozenContext.sourceUrl,
+  contextBadge: CONTRACT.safety.contextBadge,
+  persistentNotices: CONTRACT.safety.persistentNotices,
 } as const;
 
-export type AmiBand = "30" | "50" | "60" | "80";
+// The canonical contract freezes the 50% and 60% AMI bands. The UI
+// currently only surfaces the 60% band (contract.amiThresholdDefault).
+export type AmiBand = "60";
 
-// SYNTHETIC illustrative Boston HMFA FY2026 MTSP limits (annual USD).
-// These are plausible placeholders, NOT the published HUD figures.
-export const AMI_LIMITS: Record<number, Record<AmiBand, number>> = {
-  1: { "30": 32_400, "50": 54_000, "60": 64_800, "80": 86_400 },
-  2: { "30": 37_050, "50": 61_750, "60": 74_100, "80": 98_800 },
-  3: { "30": 41_650, "50": 69_450, "60": 83_340, "80": 111_100 },
-  4: { "30": 46_300, "50": 77_150, "60": 92_580, "80": 123_400 },
-  5: { "30": 50_000, "50": 83_350, "60": 100_020, "80": 133_300 },
-  6: { "30": 53_700, "50": 89_500, "60": 107_400, "80": 143_150 },
-};
+export const AMI_LIMITS_60: Record<number, number> = Object.fromEntries(
+  Object.entries(CONTRACT.mtspLimitsAnnualUsd).map(([k, v]) => [Number(k), v[60]]),
+);
 
-export function limitsFor(householdSize: number): Record<AmiBand, number> {
-  const size = Math.min(6, Math.max(1, householdSize));
-  return AMI_LIMITS[size];
+/** Returns the frozen 60% AMI limit for a household size, or `null` when the
+ *  size is outside the frozen 1–8 table. Callers MUST abstain on null. */
+export function limitsFor(householdSize: number): { "60": number } | null {
+  const v = amiLimit60(householdSize);
+  return v == null ? null : { "60": v };
 }
 
-// -------- Field allowlist (mirrors field_schema.json ids) --------
-export const FIELD_ALLOWLIST = new Set([
-  "employer",
-  "employee",
-  "pay_period_start",
-  "pay_period_end",
-  "gross_pay_period",
-  "pay_frequency",
-  "ytd_gross",
-  "annualized",
-  "benefit_type",
-  "monthly_benefit",
-  "award_start",
-  "award_end",
-]);
+export { frozenMtspLimit, isFrozenHouseholdSize };
+
+/**
+ * Sanitize an OCR evidence snippet before it is shown to the user.
+ *
+ * Uploaded document text is inert data. When a document contains lines that
+ * look like instructions to a system (prompt-injection attempts embedded in
+ * pay-stub text, etc.), RealDoor's extractor ignores them: they must not be
+ * displayed as if they were legitimate evidence, must not be quoted back to
+ * the renter, and must never influence any downstream calculation.
+ *
+ * The heuristic is conservative on purpose — it targets the injection
+ * patterns present in the demo scenarios (HH-002) and generic phrasings
+ * ("ignore prior rules", "mark applicant as APPROVED", "system:", "NOTE TO
+ * SYSTEM", "SYSTEM PROMPT"). Legitimate pay-stub content does not match.
+ */
+const INJECTION_LINE_PATTERNS: RegExp[] = [
+  /note to system/i,
+  /system prompt/i,
+  /ignore (prior|previous|all)\b.*(rules?|instructions?)/i,
+  /(mark|treat)\b.*\b(applicant|household)\b.*\b(approved|eligible|qualified)/i,
+  /skip verification/i,
+  /send packet to property/i,
+];
+
+export function sanitizeEvidenceSnippet(snippet: string): {
+  text: string;
+  excludedLineCount: number;
+  hadInjection: boolean;
+} {
+  if (!snippet) return { text: "", excludedLineCount: 0, hadInjection: false };
+  const lines = snippet.split("\n");
+  const kept: string[] = [];
+  let excluded = 0;
+  for (const line of lines) {
+    if (INJECTION_LINE_PATTERNS.some((rx) => rx.test(line))) {
+      excluded += 1;
+      continue;
+    }
+    kept.push(line);
+  }
+  // Collapse trailing blank lines left behind after removal.
+  while (kept.length && kept[kept.length - 1].trim() === "") kept.pop();
+  return { text: kept.join("\n"), excludedLineCount: excluded, hadInjection: excluded > 0 };
+}
+
+
+// -------- Field allowlist (mirrored from canonical contract) --------
+export const FIELD_ALLOWLIST: Set<string> = new Set(
+  CONTRACT.fieldAllowlistOrganizer,
+);
+
 
 // -------- Checklist statuses (brief) --------
 export type ChecklistStatus =
@@ -384,8 +431,8 @@ export const ASSISTANT_RULES: {
   },
   {
     q: "Am I eligible? Am I qualified? Decide for me.",
-    a: "RealDoor is assistive, not adjudicative. It does not approve, deny, rank, or score any application. What it can show you: your confirmed inputs, the published rule (HUD FY2026 MTSP for Boston HMFA, effective 2026-05-01), and how your annualized income compares to a frozen AMI threshold for your household size. Eligibility decisions are made by the property, PHA, or funder that receives your completed application.",
-    sources: ["RealDoor Transparency Statement"],
+    a: "RealDoor is a read-only guide. It cannot decide, approve, deny, qualify, disqualify, rank, or score any application — those verdicts are reserved for the property, PHA, or funder that receives your completed packet, and are made under their own verification and program rules. There is no override, secret mode, or upgrade that unlocks a verdict here: the safety scope is a product boundary, not a temporary limit. What the Guide can help you do instead: (1) open the Understand screen to see the neutral calculation ledger comparing your confirmed annualized income to the frozen 60% AMI threshold for your household size, (2) read the cited rules Q&A for the specific policy that applies, (3) work through the Prepare checklist so your renter-controlled packet is complete, or (4) hand off to a qualified human — a housing counselor, the property's leasing office, or a legal-aid intake line — for an adjudicative answer.",
+    sources: ["RealDoor Transparency Statement", "24 CFR 5.609", "HUD Handbook 4350.3 REV-1 Ch. 5"],
   },
   {
     q: "Which property should I apply to first?",
@@ -399,8 +446,8 @@ export const ASSISTANT_RULES: {
   },
   {
     q: "Can you tell me if another household in the demo is qualified?",
-    a: "No. RealDoor never adjudicates any household, including demo scenarios, and cannot compare or share data across households. Each session is scoped to the renter in front of the screen.",
-    sources: ["RealDoor Transparency Statement"],
+    a: "No — and this is a privacy boundary, not a capability limit. Each RealDoor session is scoped to the renter in front of the screen: their confirmed inputs, their evidence, their packet. The Guide will not adjudicate, compare, rank, or reveal the state of any other household — including the demo scenarios HH-002, HH-003, or HH-005 — because doing so would leak information across sessions and treat one renter's inputs as evidence about another. Cross-household analysis, aggregate reporting, and any comparison across applicants are outside RealDoor's scope. If you're exploring the prototype, switch scenarios from the Welcome screen to see each household on its own. Otherwise, return to your own session and continue on Profile, Understand, or Prepare.",
+    sources: ["RealDoor Transparency Statement", "RealDoor Session & Privacy"],
     abstain: true,
   },
 ];

@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle2, Edit3, AlertCircle, FileText, Search } from "lucide-react";
 import { useRealDoor } from "@/lib/realdoor-store";
-import { FIELD_ALLOWLIST, FROZEN, type ExtractedField } from "@/lib/realdoor-data";
+import { FIELD_ALLOWLIST, FROZEN, sanitizeEvidenceSnippet, type ExtractedField } from "@/lib/realdoor-data";
 import { isEvidenceExpired } from "@/lib/realdoor-store";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -98,6 +98,27 @@ function ProfilePage() {
         </div>
       )}
 
+      {(() => {
+        const { excludedLineCount, hadInjection } = sanitizeEvidenceSnippet(rd.evidenceSnippet);
+        if (!hadInjection) return null;
+        return (
+          <div
+            role="status"
+            className="mb-6 flex items-start gap-2 rounded-md border border-border bg-accent/60 p-3 text-sm"
+          >
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            <div>
+              <div className="font-medium">Unrelated content excluded from this document</div>
+              <div className="text-xs text-muted-foreground">
+                {excludedLineCount} {excludedLineCount === 1 ? "line was" : "lines were"} treated
+                as inert data and left out of extraction. Document text is never used as
+                instructions. No user action is required and no field was affected.
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Desktop: side-by-side. Mobile: tabs. */}
       <div className="hidden lg:grid lg:grid-cols-[1.05fr_1fr] lg:gap-6">
         <DocumentPanel highlightFieldId={highlightFieldId} onHighlight={setHighlightFieldId} />
@@ -153,16 +174,20 @@ function DocumentPanel({
   const rd = useRealDoor();
   const highlighted = rd.fields.find((f) => f.id === highlightFieldId);
 
+  const sanitized = useMemo(
+    () => sanitizeEvidenceSnippet(rd.evidenceSnippet).text,
+    [rd.evidenceSnippet],
+  );
+
   const rendered = useMemo(() => {
-    if (!highlighted) return rd.evidenceSnippet;
-    // Insert a mark around the first occurrence of the evidence text
-    const idx = rd.evidenceSnippet.indexOf(highlighted.evidence.text);
-    if (idx < 0) return rd.evidenceSnippet;
-    const before = rd.evidenceSnippet.slice(0, idx);
-    const match = rd.evidenceSnippet.slice(idx, idx + highlighted.evidence.text.length);
-    const after = rd.evidenceSnippet.slice(idx + highlighted.evidence.text.length);
+    if (!highlighted) return sanitized;
+    const idx = sanitized.indexOf(highlighted.evidence.text);
+    if (idx < 0) return sanitized;
+    const before = sanitized.slice(0, idx);
+    const match = sanitized.slice(idx, idx + highlighted.evidence.text.length);
+    const after = sanitized.slice(idx + highlighted.evidence.text.length);
     return { before, match, after };
-  }, [highlighted, rd.evidenceSnippet]);
+  }, [highlighted, sanitized]);
 
   return (
     <PaperCard className="p-0">

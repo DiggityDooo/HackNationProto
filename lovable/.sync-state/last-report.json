@@ -1,0 +1,9 @@
+{
+  "at": "2026-07-18T23:35:00-07:00",
+  "local": "dbeb37c31c511ee3e7f88aadd838a608e94d5d1f",
+  "origin": "dbeb37c31c511ee3e7f88aadd838a608e94d5d1f",
+  "mirror": "cc740ac3517342f4e4a0134d5970cfb84bf7b502",
+  "lovable_commit": "cc740ac3517342f4e4a0134d5970cfb84bf7b502",
+  "action": "pulled_mirror_and_sent_lovable",
+  "notes": "Pulled 17 src/ files from realdoor-copilot main (MCP server tools + profile/understand safety updates). Sent Lovable a message: fixed via code the previously-open items 4.7 (embedded-instruction sanitizer + neutral notice), 5.2 (inline abstention with fix links), 7.6 (detailed refusal/privacy language) - all done, commit cc740ac. Sacramento string is NOT in code (grepped clean); it is Lovable workspace dashboard metadata (Settings -> General) which no MCP tool can change - user must rename manually. Did NOT merge package.json/vite.config.ts: Lovable's package.json deletes next/prisma/vitest entirely (would break the Next.js engine per ARCHITECTURE.md), and adding @lovable.dev/mcp-js hit a pre-existing vite@5 (vitest) vs vite@8 (tanstack) peer conflict - left untouched, src/lib/mcp/* kept as reference-only source since the live MCP server already works on Lovable's cloud regardless. Nothing committed/pushed locally (uncommitted per policy)."
+}

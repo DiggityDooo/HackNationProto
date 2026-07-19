@@ -63,9 +63,9 @@ export function AppShell({
             <Shield className="h-3 w-3" aria-hidden />
             You confirm. A qualified human decides.
           </span>
-          <span className="badge-persist">
+          <span className="badge-persist" title={`Effective ${FROZEN.effectiveDate} · Simulation ${FROZEN.simulationDate} · Evidence ${FROZEN.evidenceCurrencyDays}-day window`}>
             <Info className="h-3 w-3" aria-hidden />
-            Boston pilot · FY 2026 rules · effective {FROZEN.effectiveDate}
+            {FROZEN.contextBadge}
           </span>
           <span className="badge-persist" style={{ background: "color-mix(in oklab, var(--color-attention) 22%, var(--color-paper))" }}>
             Prototype — synthetic documents only
